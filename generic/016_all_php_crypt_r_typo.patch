@@ -1,0 +1,13 @@
+upstream bug #53530
+gentoo bug #348567
+--- php/php-src/trunk/ext/standard/php_crypt_r.c	2010/06/17 10:22:03	300511
++++ php/php-src/trunk/ext/standard/php_crypt_r.c	2010/12/12 22:27:02	306305
+@@ -94,7 +94,7 @@
+ 	if (!initialized) {
+ #ifdef PHP_WIN32
+ 		InterlockedIncrement(&initialized);
+-#elif (defined(__GNUC__) && (__GNUC__ >= 4 && __GNUC_MINOR >= 2))
++#elif (defined(__GNUC__) && (__GNUC__ >= 4 && __GNUC_MINOR__ >= 2))
+ 		__sync_fetch_and_add(&initialized, 1);
+ #elif defined(HAVE_ATOMIC_H) /* Solaris 10 defines atomic API within */
+ 		membar_producer();
