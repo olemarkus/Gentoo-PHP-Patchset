@@ -1,3 +1,9 @@
+Provides get/set ANNOTATIONS support to PHP. [Version: 5.3.1]
+Upstream: http://hg.pardus.de/cgi-bin/hg.cgi/kolab/patches/php/summary
+Updated for 5.3 by hoffie
+Updated for 5.3.4 by olemarkus
+See bug #43948 upstream for this
+
 --- a/ext/imap/php_imap.c	2010-11-18 16:22:22.000000000 +0100
 +++ b/ext/imap/php_imap.c	2010-12-08 22:02:55.000000000 +0100
 @@ -165,6 +165,24 @@

@@ -1,3 +1,9 @@
+This patch introduces a mysqli.connect_charset php.ini option, which specifies a default charset for each connection
+Initial patch by Stuart (?) and CHTEKK
+Updated for 5.3 by hoffie
+Updated for 5.3.4 by olemarkus
+Upstream bug #33604 (also see #44118)
+
 diff -u a/ext/mysqli/mysqli.c b/ext/mysqli/mysqli.c
 --- a/ext/mysqli/mysqli.c	2010-10-06 08:08:55.000000000 +0200
 +++ b/ext/mysqli/mysqli.c	2010-12-08 21:42:15.000000000 +0100
