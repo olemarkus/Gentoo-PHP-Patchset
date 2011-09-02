@@ -265,3 +265,46 @@ See bug #43948 upstream for this
  /* }}} */
  
  /* {{{ proto object imap_status(resource stream_id, string mailbox, int options)
+diff -r ddca4d20fb71 -r 59d06eae7bc0 ext/imap/php_imap.h
+--- a/ext/imap/php_imap.h	Mon Dec 14 20:50:31 2009 +0100
++++ b/ext/imap/php_imap.h	Mon Dec 14 23:17:52 2009 +0100
+@@ -153,6 +153,7 @@
+ PHP_FUNCTION(imap_lsub_full);
+ PHP_FUNCTION(imap_create);
+ PHP_FUNCTION(imap_rename);
++PHP_FUNCTION(imap_status_current);
+ PHP_FUNCTION(imap_status);
+ PHP_FUNCTION(imap_bodystruct);
+ PHP_FUNCTION(imap_fetch_overview);
+@@ -173,6 +174,9 @@
+ PHP_FUNCTION(imap_thread);
+ PHP_FUNCTION(imap_timeout);
+ 
++// TODO: Needs fixing in configure in
++#define HAVE_IMAP2005 1
++
+ #if defined(HAVE_IMAP2000) || defined(HAVE_IMAP2001)
+ PHP_FUNCTION(imap_get_quota);
+ PHP_FUNCTION(imap_get_quotaroot);
+@@ -180,7 +184,10 @@
+ PHP_FUNCTION(imap_setacl);
+ PHP_FUNCTION(imap_getacl);
+ #endif
+-
++#if defined(HAVE_IMAP2005)
++PHP_FUNCTION(imap_setannotation);
++PHP_FUNCTION(imap_getannotation);
++#endif
+ 
+ ZEND_BEGIN_MODULE_GLOBALS(imap)
+ 	char *imap_user;
+@@ -211,6 +218,9 @@
+ 	zval **quota_return;
+ 	zval *imap_acl_list;
+ #endif
++#if defined(HAVE_IMAP2005)
++        zval *imap_annotation_list;
++#endif
+ 	/* php_stream for php_mail_gets() */
+ 	php_stream *gets_stream;
+ ZEND_END_MODULE_GLOBALS(imap)
