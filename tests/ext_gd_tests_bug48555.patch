@@ -1,0 +1,14 @@
+--- ext/gd/tests/bug48555.phpt	2009-08-01 22:26:13.000000000 +0700
++++ ../php5.3-201004071230-old/ext/gd/tests/bug48555.phpt	2010-04-08 01:33:51.000000000 +0700
+@@ -9,9 +9,9 @@
+ <?php
+ $cwd = dirname(__FILE__);
+ $font = "$cwd/Tuffy.ttf";
+-$box = ImageFTBBox(14, 0, $font, "Text without line-break");
++$box = ImageFTBBox(13, 0, $font, "Text without line-break");
+ echo 'Top without line-break: ' . $box[7] . "\n";
+-$box = ImageFTBBox(14, 0, $font, "Text with\nline-break\none more");
++$box = ImageFTBBox(13, 0, $font, "Text with\nline-break\none more");
+ echo 'Top with line-break: ' . $box[7] . "\n";
+ ?>
+ --EXPECTF--

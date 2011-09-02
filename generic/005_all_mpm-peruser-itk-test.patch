@@ -1,0 +1,12 @@
+diff -ur php-5.3.2.orig/sapi/apache2filter/config.m4 php-5.3.2/sapi/apache2filter/config.m4
+--- php-5.3.2.orig/sapi/apache2filter/config.m4	2008-03-09 13:35:56.000000000 +0100
++++ php-5.3.2/sapi/apache2filter/config.m4	2010-07-18 12:58:44.000000000 +0200
+@@ -118,7 +118,7 @@
+     ;;
+   esac
+ 
+-  if test "$APXS_MPM" != "prefork" && test "$APXS_MPM" != "peruser"; then
++  if test "$APXS_MPM" != "prefork" && test "$APXS_MPM" != "peruser" && test "$APXS_MPM" != "itk"; then
+     PHP_BUILD_THREAD_SAFE
+   fi
+   AC_MSG_RESULT(yes)

@@ -1,0 +1,8 @@
+--- ext/standard/tests/network/getmxrr.phpt	2009-07-17 19:20:42.000000000 +0700
++++ ../php5.3-201004071230-old/ext/standard/tests/network/getmxrr.phpt	2010-04-07 23:48:41.000000000 +0700
+@@ -19,4 +19,4 @@
+ ?>
+ --EXPECT--
+ Hosts: 2, weights: 2
+-Hosts: 1, weights: 1
++Hosts: 3, weights: 3

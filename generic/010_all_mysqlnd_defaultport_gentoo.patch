@@ -1,0 +1,54 @@
+diff -ur php-5.3.3.orig/configure php-5.3.3/configure
+--- php-5.3.3.orig/configure	2010-07-24 23:02:55.000000000 +0200
++++ php-5.3.3/configure	2010-07-24 23:19:09.000000000 +0200
+@@ -25242,7 +25242,7 @@
+         *.c) ac_comp="$b_c_pre $ac_extra $ac_inc $b_c_meta -c $ac_srcdir$ac_src -o $ac_bdir$ac_obj.$b_lo $b_c_post" ;;
+         *.s) ac_comp="$b_c_pre $ac_extra $ac_inc $b_c_meta -c $ac_srcdir$ac_src -o $ac_bdir$ac_obj.$b_lo $b_c_post" ;;
+         *.S) ac_comp="$b_c_pre $ac_extra $ac_inc $b_c_meta -c $ac_srcdir$ac_src -o $ac_bdir$ac_obj.$b_lo $b_c_post" ;;
+-        *.cpp|*.cc|*.cxx) ac_comp="$b_cxx_pre $ac_extra $ac_inc $b_cxx_meta -c $ac_srcdir$ac_src -o $ac_bdir$ac_obj.$b_lo $b_cxx_post" ;;
++        *.cpp|*.cc|*.cxx) ac_comp="$b_cxx_pre $ac_extra $ac_inc $b_cxx_meta"-c $ac_srcdir$ac_src -o $ac_bdir$ac_obj.$b_lo $b_cxx_post" ;;
+       esac
+ 
+     cat >>Makefile.objects<<EOF
+diff -ur php-5.3.3.orig/ext/mysqlnd/mysqlnd.c php-5.3.3/ext/mysqlnd/mysqlnd.c
+--- php-5.3.3.orig/ext/mysqlnd/mysqlnd.c	2010-07-24 23:02:55.000000000 +0200
++++ php-5.3.3/ext/mysqlnd/mysqlnd.c	2010-07-24 23:18:33.000000000 +0200
+@@ -27,6 +27,15 @@
+ #include "mysqlnd_statistics.h"
+ #include "mysqlnd_charset.h"
+ #include "mysqlnd_debug.h"
++
++#if !defined(PHP_WIN32) && !defined(NETWARE)
++# include <netdb.h>
++# include <netinet/in.h>
++# if HAVE_ARPA_INET_H
++#  include <arpa/inet.h>
++# endif
++#endif
++
+ /* for php_get_current_user() */
+ #include "ext/standard/basic_functions.h"
+ 
+@@ -646,7 +655,22 @@
+ #endif
+ 		{
+ 			if (!port) {
++#if !defined(PHP_WIN32) && !defined(NETWARE)
++				struct servent *serv_ptr;
++				char *env;
++
++				if ((serv_ptr = getservbyname("mysql", "tcp"))) {
++					port = (uint) ntohs((ushort) serv_ptr->s_port);
++				}
++				if ((env = getenv("MYSQL_TCP_PORT"))) {
++					port = (uint) atoi(env);
++				}
++				if (port <= 0) {
++					port = 3306;
++				}
++#else
+ 				port = 3306;
++#endif
+ 			}
+ 			transport_len = spprintf(&transport, 0, "tcp://%s:%u", host, port);
+ 		}

@@ -1,0 +1,79 @@
+diff -ur php-5.3.3.orig/ext/mysql/php_mysql.c php-5.3.3/ext/mysql/php_mysql.c
+--- php-5.3.3.orig/ext/mysql/php_mysql.c	2010-07-24 23:02:55.000000000 +0200
++++ php-5.3.3/ext/mysql/php_mysql.c	2010-07-24 23:06:59.000000000 +0200
+@@ -506,6 +506,7 @@
+ 	STD_PHP_INI_ENTRY("mysql.default_socket",		NULL,	PHP_INI_ALL,		OnUpdateStringUnempty,	default_socket,	zend_mysql_globals,		mysql_globals)
+ #endif
+ 	STD_PHP_INI_ENTRY("mysql.connect_timeout",		"60",	PHP_INI_ALL,		OnUpdateLong,		connect_timeout, 	zend_mysql_globals,		mysql_globals)
++	STD_PHP_INI_ENTRY("mysql.connect_charset",		NULL,	PHP_INI_ALL,		OnUpdateString,		connect_charset,	zend_mysql_globals,		mysql_globals)
+ 	STD_PHP_INI_BOOLEAN("mysql.trace_mode",			"0",	PHP_INI_ALL,		OnUpdateLong,		trace_mode, 		zend_mysql_globals,		mysql_globals)
+ 	STD_PHP_INI_BOOLEAN("mysql.allow_local_infile",	"1",	PHP_INI_SYSTEM,		OnUpdateLong,		allow_local_infile, zend_mysql_globals,		mysql_globals)
+ PHP_INI_END()
+@@ -523,6 +524,7 @@
+ 	mysql_globals->connect_errno = 0;
+ 	mysql_globals->connect_error = NULL;
+ 	mysql_globals->connect_timeout = 0;
++	mysql_globals->connect_charset = NULL;
+ 	mysql_globals->trace_mode = 0;
+ 	mysql_globals->allow_local_infile = 1;
+ 	mysql_globals->result_allocated = 0;
+@@ -691,6 +693,7 @@
+ {
+ 	char *user=NULL, *passwd=NULL, *host_and_port=NULL, *socket=NULL, *tmp=NULL, *host=NULL;
+ 	int  user_len, passwd_len, host_len;
++	char *connect_charset=NULL;
+ 	char *hashed_details=NULL;
+ 	int hashed_details_length, port = MYSQL_PORT;
+ 	long client_flags = 0;
+@@ -710,6 +713,7 @@
+ #endif
+ 
+ 	connect_timeout = MySG(connect_timeout);
++	connect_charset = MySG(connect_charset);
+ 
+ 	socket = MySG(default_socket);
+ 
+@@ -845,6 +849,11 @@
+ 			if (connect_timeout != -1) {
+ 				mysql_options(mysql->conn, MYSQL_OPT_CONNECT_TIMEOUT, (const char *)&connect_timeout);
+ 			}
++
++			if (connect_charset != NULL) {
++				mysql_options(mysql->conn, MYSQL_SET_CHARSET_NAME, connect_charset);
++			}
++
+ #ifndef MYSQL_USE_MYSQLND
+ 			if (mysql_real_connect(mysql->conn, host, user, passwd, NULL, port, socket, client_flags)==NULL)
+ #else
+@@ -893,6 +902,9 @@
+ #endif	
+ 			if (mysql_ping(mysql->conn)) {
+ 				if (mysql_errno(mysql->conn) == 2006) {
++					if (connect_charset != NULL) {
++						mysql_options(mysql->conn, MYSQL_SET_CHARSET_NAME, connect_charset);
++					}
+ #ifndef MYSQL_USE_MYSQLND
+ 					if (mysql_real_connect(mysql->conn, host, user, passwd, NULL, port, socket, client_flags)==NULL)
+ #else
+@@ -972,6 +984,10 @@
+ 			mysql_options(mysql->conn, MYSQL_OPT_CONNECT_TIMEOUT, (const char *)&connect_timeout);
+ 		}
+ 
++		if (connect_charset != NULL) {
++			mysql_options(mysql->conn, MYSQL_SET_CHARSET_NAME, connect_charset);
++		}
++
+ #ifndef MYSQL_USE_MYSQLND
+ 		if (mysql_real_connect(mysql->conn, host, user, passwd, NULL, port, socket, client_flags)==NULL) 
+ #else
+diff -ur php-5.3.3.orig/ext/mysql/php_mysql_structs.h php-5.3.3/ext/mysql/php_mysql_structs.h
+--- php-5.3.3.orig/ext/mysql/php_mysql_structs.h	2010-07-24 23:02:55.000000000 +0200
++++ php-5.3.3/ext/mysql/php_mysql_structs.h	2010-07-24 23:03:30.000000000 +0200
+@@ -118,6 +118,7 @@
+ 	long default_port;
+ 	char *default_host, *default_user, *default_password;
+ 	char *default_socket;
++	char *connect_charset;
+ 	char *connect_error;
+ 	long connect_errno;
+ 	long connect_timeout;
