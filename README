@@ -1,0 +1,14 @@
+Patchset policy:
+
+A patch can be added to the patchset if either:
+1) It solves a critical security fix and no new PHP release is in sight
+2) It solves a Gentoo specific issue such as default paths, --as-needed etc
+
+This means specifically that the patchset can not contain patches that adds new features or behaviour not supported by upstream.
+
+If you require such patches, we provide an alternative:
+1. Create the directory /etc/portage/patches/dev-lang/php
+2. Drop any patches you would like to apply to PHP in said directory
+3. emerge php
+
+This will apply your patches to PHP after the ebuild has applied the Gentoo patchset.
